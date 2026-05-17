@@ -567,16 +567,30 @@
   function openModal()  { document.getElementById('modal').classList.add('open'); }
   function closeModal() { document.getElementById('modal').classList.remove('open'); }
   function closeOnOverlay(e) { if (e.target===document.getElementById('modal')) closeModal(); }
-  function submitForm() {
-    const email = document.getElementById('input-email').value.trim();
-    if (!email || !email.includes('@')) {
-      document.getElementById('input-email').style.borderColor='#e24b4a'; return;
-    }
-    document.getElementById('modal-form').style.display='none';
-    document.getElementById('success-msg').style.display='block';
-    setTimeout(closeModal, 2600);
+  async function submitForm() {
+  const name  = document.getElementById('input-name').value.trim();
+  const email = document.getElementById('input-email').value.trim();
+
+  if (!email || !email.includes('@')) {
+    document.getElementById('input-email').style.borderColor = '#e24b4a';
+    return;
   }
 
+  try {
+    await fetch('https://script.google.com/macros/s/AKfycbx42W53loxDdGxgXwb2YJGqL0JUoN2Xn0ov9rsfhk3vCeloOIHrVIwbxWzhsFLBxXg1/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email })
+    });
+  } catch (err) {
+    console.error('Submission error:', err);
+  }
+
+  document.getElementById('modal-form').style.display = 'none';
+  document.getElementById('success-msg').style.display = 'block';
+  setTimeout(closeModal, 2600);
+}
   /* Nav syncing */
   function syncNav(saadaId, kalaaId) {
     document.getElementById(saadaId).addEventListener('click', e=>{
