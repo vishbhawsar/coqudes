@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>coqudes — join the waitlist</title>
+ <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .hero {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Background */
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
+    }
+
+    /* Logo */
+    .hero__logo {
+      position: absolute;
+      top: 30px;
+      left: 20px;
+      width: auto;
+      height: 28px;
+      z-index: 10;
+    }
+
+    /* Title SVG — "join the waitlist" */
+    .hero__title {
+      position: absolute;
+      top: 18%;
+      left: 0;
+      width: 100%;
+      padding: 0 18px;
+      z-index: 5;
+    }
+
+    .hero__title img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Model image — sits above title text, bottom-anchored */
+    .hero__model {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-40%);
+      height: 82%;
+      width: auto;
+      z-index: 8;
+      object-fit: contain;
+      object-position: bottom center;
+    }
+
+    /* Arrow button */
+    .hero__arrow {
+      position: absolute;
+      top: 32%;
+      left: 25px;
+      width: 52px;
+      height: 52px;
+      z-index: 10;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .hero__arrow:hover {
+      transform: scale(1.08);
+    }
+
+    .hero__arrow img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Modal backdrop */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0);
+      opacity: 0;
+      pointer-events: none;
+      transition: background 0.3s ease, opacity 0.3s ease;
+    }
+
+    .modal-backdrop.open {
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Modal card */
+    .modal-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      width: 320px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      opacity: 0;
+      transform: scale(0.95) translateY(16px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .modal-backdrop.open .modal-card {
+      opacity: 0.97;
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #aaa;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #555;
+    }
+
+    .modal-card h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #111;
+    }
+
+    .modal-card h2 span {
+      color: #1189A1;
+    }
+
+    .modal-card p {
+      color: #888;
+      font-size: 13.5px;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .modal-card input {
+      width: 100%;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      margin-top: 14px;
+      padding: 10px 12px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: #333;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .modal-card input::placeholder {
+      color: #bbb;
+      font-weight: 300;
+    }
+
+    .modal-card input:focus {
+      border-color: #1189A1;
+    }
+
+    .modal-card .modal-btn {
+      width: 100%;
+      background: #1189A1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      margin-top: 16px;
+      padding: 11px;
+      font-size: 13.5px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 0.1px;
+    }
+
+    .modal-card .modal-btn:hover {
+      background: #0e7a8f;
+    }
+
+    .modal-insta-wrap {
+      position: relative;
+      margin-top: 0px;
+    }
+
+    .modal-at {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #bbb;
+      font-size: 13.5px;
+      pointer-events: none;
+    }
+
+    .modal-insta {
+      width: 100%;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 10px 12px 10px 24px;
+      font-size: 13.5px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #333;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .modal-insta::placeholder { color: #bbb; font-weight: 300; }
+    .modal-insta:focus { border-color: #1189A1; }
+
+    /* Social icons — bottom left */
+    .hero__socials {
+      position: absolute;
+      bottom: 30px;
+      left: 20px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero__socials a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      opacity: 0.95;
+      transition: opacity 0.2s ease;
+    }
+
+    .hero__socials a:hover {
+      opacity: 1;
+    }
+
+    .hero__socials img {
+      height: 22px;
+      width: 22px;
+      object-fit: contain;
+    }
+
+    /* ============================================
+       DESKTOP — min-width: 769px
+    ============================================ */
+
+    .hero__desktop-arrow { display: none; }
+
+    @media (min-width: 769px) {
+      .hero__desktop-arrow { display: block; }
+    }
+
+    @media (min-width: 769px) {
+
+      .hero__bg { display: none; }
+
+      .hero__bg--desktop {
+        display: block;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        z-index: 0;
+      }
+
+      .hero__logo {
+        top: 28px;
+        left: 28px;
+        height: 30px;
+      }
+
+      .hero__socials {
+        top: 28px;
+        bottom: auto;
+        left: auto;
+        right: 28px;
+        flex-direction: row;
+        gap: 20px;
+      }
+
+      .hero__socials img {
+        height: 24px;
+        width: 24px;
+      }
+
+      .hero__title { display: none; }
+      .hero__model { display: none; }
+      .hero__arrow { display: none; }
+
+      .hero__desktop-title {
+        display: block;
+        position: absolute;
+        top: 8%;
+        left: 0;
+        width: 100%;
+        padding: 0 28px;
+        z-index: 5;
+      }
+
+      .hero__desktop-title img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* Desktop arrow — sits in the gap between "j" and "in the" */
+      .hero__desktop-arrow {
+        display: block;
+        position: absolute;
+        top: 12%;
+        left: 7%;
+        width: clamp(50px, 7vw, 110px);
+        height: clamp(50px, 7vw, 110px);
+        z-index: 10;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .hero__desktop-arrow:hover {
+        transform: scale(1.08);
+      }
+
+      .hero__desktop-arrow img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+
+
+
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+
+    <!-- Desktop Background (MODEL-XX7 is the full bg) -->
+    <img class="hero__bg--desktop" src="MODEL-XX7.png" alt="" />
+
+    <!-- Desktop title: JTWL-2.svg -->
+    <div class="hero__desktop-title">
+      <img src="JTWL-2.svg" alt="join the waitlist" />
+    </div>
+
+    <!-- Desktop arrow — overlaid in the "o" gap -->
+    <div class="hero__desktop-arrow" onclick="openModal()">
+      <img src="ARW.png" alt="Join waitlist" />
+    </div>
+
+    <!-- Mobile Background -->
+    <img class="hero__bg" src="BG-MWB.png" alt="" />
+
+    <!-- Logo -->
+    <img class="hero__logo" src="SL-WHT-PNG.png" alt="coqudes" />
+
+    <!-- Title: join the waitlist -->
+    <div class="hero__title">
+      <img src="JTWL.svg" alt="join the waitlist" />
+    </div>
+
+    <!-- Model image (above title text layer) -->
+    <img class="hero__model" src="MODEL-XX6.png" alt="" />
+
+    <!-- Arrow button -->
+    <div class="hero__arrow" onclick="openModal()">
+      <img src="ARW.png" alt="Join waitlist" />
+    </div>
+
+    <!-- Waitlist modal -->
+    <div class="modal-backdrop" id="modal" onclick="closeModal()">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <h2>join<span>.</span></h2>
+        <p>be first to know when we drop.<br>No spam — just the good stuff.</p>
+        <div id="modal-form">
+          <input type="text"  id="input-name"  placeholder="your name" />
+          <input type="email" id="input-email" placeholder="your email address" />
+          <div class="modal-insta-wrap">
+            <span class="modal-at"></span>
+            <input type="text" id="input-insta" placeholder="@ your instagram" class="modal-insta" />
+          </div>
+          <button class="modal-btn" onclick="submitForm()">get early access →</button>
+        </div>
+        <div id="success-msg" style="display:none; text-align:center; padding: 20px 0;">
+          <p style="color:#1189A1; font-weight:600; font-size:15px;">you're on the list 🎉</p>
+          <p style="color:#888; font-size:13px; margin-top:6px;">we'll be in touch soon.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social icons -->
+    <div class="hero__socials">
+      <a href="https://www.instagram.com/coqudes/" target="_blank" rel="noopener">
+        <img src="INSTA-I.png" alt="Instagram" />
+      </a>
+      <a href="https://www.tiktok.com/@coqudes" target="_blank" rel="noopener">
+        <img src="TIK-I.png" alt="TikTok" />
+      </a>
+      <a href="https://www.linkedin.com/company/coqudes" target="_blank" rel="noopener">
+        <img src="LINK-I.png" alt="LinkedIn" />
+      </a>
+    </div>
+
+  </section>
+
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx42W53loxDdGxgXwb2YJGqL0JUoN2Xn0ov9rsfhk3vCeloOIHrVIwbxWzhsFLBxXg1/exec';
+
+    function openModal() {
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+      // Reset form after close animation
+      setTimeout(function() {
+        document.getElementById('modal-form').style.display = 'block';
+        document.getElementById('success-msg').style.display = 'none';
+        document.getElementById('input-name').value = '';
+        document.getElementById('input-email').value = '';
+        document.getElementById('input-insta').value = '';
+      }, 300);
+    }
+
+function submitForm() {
+  const name  = document.getElementById('input-name').value.trim();
+  const email = document.getElementById('input-email').value.trim();
+  const insta = document.getElementById('input-insta').value.trim();
+
+  // Basic email validation
+  if (!email || !email.includes('@')) {
+    document.getElementById('input-email').style.borderColor = '#e24b4a';
+    return;
+  }
+
+  // Send to Google Sheets
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, instagram: insta })
+  });
+
+  // Show success
+  document.getElementById('modal-form').style.display = 'none';
+  document.getElementById('success-msg').style.display = 'block';
+  setTimeout(closeModal, 2600);
+}
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

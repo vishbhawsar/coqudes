@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1041.94 408.36">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: HelveticaNeue-Bold, 'Helvetica Neue';
+        font-size: 75px;
+        font-weight: 700;
+      }
+
+      .cls-1, .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        font-family: HelveticaNeue-Heavy, 'Helvetica Neue';
+        font-size: 300px;
+        font-weight: 800;
+        letter-spacing: -.03em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <text class="cls-2" transform="translate(.06 264.06)"><tspan x="0" y="0">waitlist</tspan></text>
+    <text class="cls-1" transform="translate(1.42 63.75)"><tspan x="0" y="0">join the</tspan></text>
+  </g>
+</svg>
